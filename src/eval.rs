@@ -3,7 +3,7 @@ use macroquad::material;
 use crate::{Board, GameStatus, Piece};
 
 const MATERIAL_ADVANTAGE_MUL: i32 = 1;
-pub const WIN_VALUE: i32 = 1_000_000_000;
+pub const WIN_VALUE: i32 = -1_000_000_000;
 const ITER_PIECE_TYPES: [Piece; 5] = [
     Piece::Pawn,
     Piece::Knight,

@@ -26,6 +26,8 @@ pub struct Engine {
     searching: bool,
     root_board: Board,
 }
+
+
 fn main() {
     let mut engine = Engine {
         searching: false,
@@ -38,3 +40,12 @@ fn main() {
         uci::parse(&buffer, &mut engine);
     }
 }
+
+
+/* 
+fn main() {
+    let mut board = Board::from_fen("rnbqkbnr/1pppp1pp/5Q2/8/2B1P3/p7/PPPP1PPP/RNB1K1NR w KQkq - 0 1", false).unwrap();
+    board.play("f6f7".parse().unwrap());
+    println!("{}", eval::evaluate(&board, 0));
+}
+*/

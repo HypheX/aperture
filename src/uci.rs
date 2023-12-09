@@ -1,7 +1,7 @@
 use std::thread;
 use std::str::SplitWhitespace;
 
-use cozy_chess::{Board, Move};
+use cozy_chess::{Board, Move, File, Square, Piece};
 use macroquad::input;
 
 use super::{Engine, INF};
@@ -47,10 +47,13 @@ fn go(mut input_iter: SplitWhitespace<'_>, engine: &mut Engine) {
     engine.searching = true;
 
     let board = engine.root_board.clone();
-    let search_handle = thread::spawn(|| {
+    thread::spawn(|| {
         let thread_board = board;
-        let (_, best) = search::alphabeta(&thread_board, 50, -INF, INF);
-        println!("bestmove {}", best.unwrap())
+        let (eval, best) = search::alphabeta(&thread_board, 4, -INF, INF);
+        println!("info score cp {}", eval);
+        let mv = best.unwrap();
+        let uci_move = to_uci_castling(&thread_board, mv, false);
+        println!("bestmove {}", uci_move)
     });
 }
 
@@ -80,7 +83,8 @@ fn position(mut input_iter: SplitWhitespace<'_>, engine: &mut Engine) {
 
     if let Some("moves") = input_iter.next() {
         for mv in input_iter {
-            engine.root_board.play(mv.parse().unwrap());
+            let cozy_move = from_uci_castling(&engine.root_board, mv.parse().unwrap(), false);
+            engine.root_board.play(cozy_move);
         }
     }
 }
@@ -93,4 +97,33 @@ fn uci() {
 
 fn isready() {
     println!("readyok");
+}
+
+
+fn to_uci_castling(board: &Board, mut mv: Move, chess960: bool) -> Move {
+    if chess960 {
+        return mv;
+    }
+    if board.color_on(mv.from) == board.color_on(mv.to) {
+        if mv.to.file() > mv.from.file() {
+            mv.to = Square::new(File::G, mv.to.rank());
+        } else {
+            mv.to = Square::new(File::C, mv.to.rank());
+        }
+    }
+    mv
+}
+
+fn from_uci_castling(board: &Board, mut mv: Move, chess960: bool) -> Move {
+    if chess960 {
+        return mv;
+    }
+    if mv.from.file() == File::E && board.piece_on(mv.from) == Some(Piece::King) {
+        if mv.to.file() == File::G {
+            mv.to = Square::new(File::H, mv.to.rank());
+        } else if mv.to.file() == File::C {
+            mv.to = Square::new(File::A, mv.to.rank());
+        }
+    }
+    mv
 }
