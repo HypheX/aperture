@@ -2,7 +2,6 @@ use std::thread;
 use std::str::SplitWhitespace;
 
 use cozy_chess::{Board, Move, File, Square, Piece};
-use macroquad::input;
 
 use super::{Engine, INF};
 use super::search;

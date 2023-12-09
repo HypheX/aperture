@@ -1,7 +1,6 @@
 pub const INF: i32 = 1_500_000_000;
 use super::eval;
 use cozy_chess::{Board, Color, GameStatus, Move, Piece};
-use macroquad::rand::ChooseRandom;
 
 /* pub fn alphabeta(board: &Board, depth: u8, mut alpha: i32, beta: i32) -> (i32, Option<Move>) {
     if (depth == 0) || (board.status() != GameStatus::Ongoing) {
